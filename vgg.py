@@ -84,7 +84,8 @@ class net_D(nn.Module):
             nn.ReLU(True),
             nn.Linear(256, 128),
             nn.ReLU(True),
-            nn.Linear(128, 1)
+            nn.Linear(128, 1),
+            nn.Sigmoid()
         )
         if init_weights:
             self._initialize_weights()
