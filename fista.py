@@ -27,8 +27,8 @@ class FISTA(Optimizer):
         for group in self.param_groups:
             if(self.epoch%group['lr_scaled_time']==0):
                 group['lr']*=group['lr_scaled']
+            ii=0
             for p in group['params'] :
-
                 param_state = self.state[p]
                 if 'm_buffer' not in param_state:
                     param_state['m_buffer'] = torch.ones_like(p.data)
@@ -41,6 +41,11 @@ class FISTA(Optimizer):
                 y_buf = p.data+(self.ak-1)/self.ak1*(p.data-m_buf)
                 m_buf = p.data
                 p.data = y_buf
+                if(ii==0):
+                    print(1)
+                    print(y_buf)
+                    print(p.data)
+                ii=1
         self.ak=self.ak1
         return loss
     def step2(self, closure=None):
@@ -49,6 +54,7 @@ class FISTA(Optimizer):
         if closure is not None:
             loss = closure()
         for group in self.param_groups:
+            ii=0
             for p in group['params']:
                 if p.grad is None:
                     continue
@@ -57,6 +63,10 @@ class FISTA(Optimizer):
                 y_now = param_state['y_buffer']
                 rz=y_now-group['lr']*d_p
                 p.data = torch.sign(rz)*torch.nn.functional.relu(torch.abs(rz)-group['lr']*group['Lamb'])
+                if(ii==0):
+                    print(2)
+                    print(p.data)
+                ii=1
         self.epoch+=1
         return loss
 
