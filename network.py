@@ -37,8 +37,8 @@ class GALPRUN():
         self.trainloader = torch.utils.data.DataLoader(self.trainset, batch_size=batchSize, shuffle=True) 
         self.testset = torchvision.datasets.CIFAR10(root='data', train=False, download=True, transform=transform_test)
         self.testloader = torch.utils.data.DataLoader(self.testset, batch_size=256, shuffle=True) 
-        self.target_real=torch.ones((batchSize,1))
-        self.target_fake=torch.zeros((batchSize,1))
+        self.target_real=torch.ones((batchSize,1)).cuda()
+        self.target_fake=torch.zeros((batchSize,1)).cuda()
     def train(self,epoch_time):
         for epoch in range(epoch_time):
             self.vggnet_stu.train()
