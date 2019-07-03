@@ -31,9 +31,9 @@ class FISTA(Optimizer):
 
                 param_state = self.state[p]
                 if 'm_buffer' not in param_state:
-                    param_state['m_buffer'] = torch.zeros_like(p.data)
+                    param_state['m_buffer'] = torch.ones_like(p.data)
                 if 'y_buffer' not in param_state:
-                    param_state['y_buffer'] = torch.zeros_like(p.data)
+                    param_state['y_buffer'] = torch.ones_like(p.data)
                 
                 m_buf = param_state['m_buffer']
                 y_buf = param_state['y_buffer']
