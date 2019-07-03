@@ -60,7 +60,7 @@ class GALPRUN():
                 out_stu=self.vggnet_stu(inputs)
                 out_tea_D=self.net_D(out_tea)
                 out_stu_D=self.net_D(out_stu)
-                D_loss = self.BCELoss(out_tea_D.data, self.target_real) + self.BCELoss(out_stu_D.data, self.target_fake)
+                D_loss = self.BCELoss(out_tea_D, self.target_real) + self.BCELoss(out_stu_D, self.target_fake)
                 D_loss_sum += D_loss.item()
                 D_loss.backward()
                 self.optimizer_D.step()
@@ -74,7 +74,7 @@ class GALPRUN():
                 self.optimizer_D.zero_grad()
                 out_stu=self.vggnet_stu(inputs)
                 out_stu_D=self.net_D(out_stu)
-                other_loss = self.BCELoss(self.net_D(Variable(out_stu_D.data)), self.target_real)
+                other_loss = self.BCELoss(out_stu_D, self.target_real)
                 l2_regularization = torch.tensor([0],dtype =torch.float32).cuda()
                 for param in self.vggnet_stu.parameters_other():
                     l2_regularization += torch.norm(param, 2)/2 #L2 正则化
@@ -91,7 +91,7 @@ class GALPRUN():
                 self.optimizer_D.zero_grad()
                 out_stu=self.vggnet_stu(inputs)
                 out_stu_D=self.net_D(out_stu)
-                mask_loss = self.BCELoss(self.net_D(Variable(out_stu_D.data)), self.target_real)
+                mask_loss = self.BCELoss(out_stu_D, self.target_real)
                 mask_loss+=0.5*self.MSELoss(out_stu_D,out_tea_D)  
                 mask_loss_sum += mask_loss.item() 
                 mask_loss.backward()
