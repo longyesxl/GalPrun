@@ -20,10 +20,10 @@ class GALPRUN():
             transforms.ToTensor(),
             transforms.Normalize((0.4914, 0.4822, 0.4465), (0.2023, 0.1994, 0.2010)),
         ])  
-        self.vggnet_tea=vgg.vgg16()
+        self.vggnet_tea=vgg.vgg16().cuda()
         self.vggnet_tea.load_state_dict(torch.load(tea_path))
-        self.vggnet_stu=vgg.vgg16()
-        self.net_D=vgg.net_D()
+        self.vggnet_stu=vgg.vgg16().cuda()
+        self.net_D=vgg.net_D().cuda()
         self.optimizer_mask = fista.FISTA(self.vggnet_stu.parameters_mask())
         # self.optimizer_other = optim.SGD(vggnet.parameters_other(), lr=0.001, momentum=0.9)
         # self.optimizer_D = optim.SGD(vggnet.parameters_other(), lr=0.001, momentum=0.9)
