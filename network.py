@@ -112,9 +112,3 @@ class GALPRUN():
             ed=time.time()
             print("Training Finished, TotalEPOCH=%d,Epochtime=%d" % (epoch,ed-st))
 
-
-
-
-for i in range(40):
-    optimizer.step1()
-print(type(vggnet.parameters_mask()))
