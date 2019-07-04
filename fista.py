@@ -45,6 +45,7 @@ class FISTA(Optimizer):
                     print(1)
                     print(y_buf)
                     print(p.data)
+                    print(p.grad.data)
                 ii=1
         self.ak=self.ak1
         return loss
@@ -66,6 +67,7 @@ class FISTA(Optimizer):
                 if(ii==0):
                     print(2)
                     print(p.data)
+                    print(p.grad.data)
                 ii=1
         self.epoch+=1
         return loss
