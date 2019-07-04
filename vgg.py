@@ -21,7 +21,7 @@ model_urls = {
 }
 
 class Mask(nn.Module):
-    def __init__(self,c, init_weights=True):
+    def __init__(self,c, init_weights=False):
         super(Mask, self).__init__()
         #self.mask = torch.randn(c,1, 1, requires_grad=True)
         self.mask = Parameter(torch.ones(c,1, 1, requires_grad=True))
@@ -51,6 +51,10 @@ class VGG(nn.Module):
         )
         if init_weights:
             self._initialize_weights()
+    def init_mask():
+        for m in self.modules():
+            if isinstance(m, Mask):
+                nn.init.normal_(m.mask, 0,1)
     def parameters_mask(self, recurse=True):
         for name, param in self.named_parameters(recurse=recurse):
             if 'mask' in name:
