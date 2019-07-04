@@ -41,11 +41,11 @@ class FISTA(Optimizer):
                 y_buf = p.data+(self.ak-1)/self.ak1*(p.data-m_buf)
                 m_buf = p.data
                 p.data = y_buf
-                if(ii==0):
-                    print(1)
-                    print(y_buf)
-                    print(p.data)
-                    print(p.grad.data)
+                # if(ii==0):
+                #     print(1)
+                #     print(y_buf)
+                #     print(p.data)
+                #     print(p.grad.data)
                 ii=1
         self.ak=self.ak1
         return loss
@@ -64,10 +64,10 @@ class FISTA(Optimizer):
                 y_now = param_state['y_buffer']
                 rz=y_now-group['lr']*d_p
                 p.data = torch.sign(rz)*torch.nn.functional.relu(torch.abs(rz)-group['lr']*group['Lamb'])
-                if(ii==0):
-                    print(2)
-                    print(p.data)
-                    print(p.grad.data)
+                # if(ii==0):
+                #     print(2)
+                #     print(p.data)
+                #     print(p.grad.data)
                 ii=1
         self.epoch+=1
         return loss
