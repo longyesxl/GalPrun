@@ -51,7 +51,7 @@ class VGG(nn.Module):
         )
         if init_weights:
             self._initialize_weights()
-    def init_mask():
+    def init_mask(self):
         for m in self.modules():
             if isinstance(m, Mask):
                 nn.init.normal_(m.mask, 0,1)
