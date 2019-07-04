@@ -20,20 +20,17 @@ model_urls = {
     'vgg19_bn': 'https://download.pytorch.org/models/vgg19_bn-c79401a0.pth',
 }
 
-class Mask(nn.Module):
-    def __init__(self,c, init_weights=False):
-        super(Mask, self).__init__()
+class Conv2d_Mask(nn.Module):
+    def __init__(self,in_channels, v, kernel_size, padding):
+        super(Conv2d_Mask, self,).__init__()
         #self.mask = torch.randn(c,1, 1, requires_grad=True)
-        self.mask = Parameter(torch.ones(c,1, 1, requires_grad=True))
-        if init_weights:
-            self._initialize_weights()
+        self.Conv2d=nn.Conv2d(in_channels, v, kernel_size=kernel_size, padding=padding)
+        self.mask = torch.ones(v,1, 1)
     def forward(self, x):
-        y=x.mul(self.mask)
-        return y
+        y=self.Conv2d(x)
+        z=y.mul(self.mask)
+        return z
 
-    def _initialize_weights(self):
-        for m in self.modules():
-            nn.init.normal_(m.mask, 0,1)
 class VGG(nn.Module):
 
     def __init__(self, features, num_classes=10, init_weights=True):
@@ -51,18 +48,6 @@ class VGG(nn.Module):
         )
         if init_weights:
             self._initialize_weights()
-    def init_mask(self):
-        for m in self.modules():
-            if isinstance(m, Mask):
-                nn.init.normal_(m.mask, 0,1)
-    def parameters_mask(self, recurse=True):
-        for name, param in self.named_parameters(recurse=recurse):
-            if 'mask' in name:
-                yield param
-    def parameters_other(self, recurse=True):
-        for name, param in self.named_parameters(recurse=recurse):
-            if 'mask' not in name:
-                yield param
     def forward(self, x):
         x = self.features(x)
         x = self.avgpool(x)
@@ -122,11 +107,8 @@ def make_layers(cfg, batch_norm=False):
     for v in cfg:
         if v == 'M':
             layers += [nn.MaxPool2d(kernel_size=2, stride=2)]
-            
-        elif v <0:
-            layers += [Mask(in_channels)]
         else:
-            conv2d = nn.Conv2d(in_channels, v, kernel_size=3, padding=1)
+            conv2d = Conv2d_Mask(in_channels, v, kernel_size=3, padding=1)
             if batch_norm:
                 layers += [conv2d, nn.BatchNorm2d(v), nn.ReLU(inplace=True)]
             else:
@@ -138,7 +120,7 @@ def make_layers(cfg, batch_norm=False):
 cfg = {
     'A': [64, 'M', 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
     'B': [64, 64, 'M', 128, 128, 'M', 256, 256, 'M', 512, 512, 'M', 512, 512, 'M'],
-    'D': [64,-32, 64, -32,'M', 128, -16,128, -16,'M', 256,-8, 256,-8, 256,-8, 'M', 512, -4,512, -4,512,-4, 'M', 512,-2, 512, -2,512, -2,'M'],
+    'D': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 'M', 512, 512,512, 'M', 512, 512, 512, 'M'],
     'E': [64, 64, 'M', 128, 128, 'M', 256, 256, 256, 256, 'M', 512, 512, 512, 512, 'M', 512, 512, 512, 512, 'M'],
 }
 
