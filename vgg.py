@@ -21,13 +21,19 @@ model_urls = {
 }
 
 class Mask(nn.Module):
-    def __init__(self,c):
+    def __init__(self,c, init_weights=True):
         super(Mask, self).__init__()
         #self.mask = torch.randn(c,1, 1, requires_grad=True)
         self.mask = Parameter(torch.ones(c,1, 1, requires_grad=True))
+        if init_weights:
+            self._initialize_weights()
     def forward(self, x):
         y=x.mul(self.mask)
         return y
+
+    def _initialize_weights(self):
+        for m in self.modules():
+            nn.init.normal_(m.mask, 0,1)
 class VGG(nn.Module):
 
     def __init__(self, features, num_classes=10, init_weights=True):
@@ -244,3 +250,5 @@ def vgg19_bn(pretrained=False, **kwargs):
         model.load_state_dict(model_zoo.load_url(model_urls['vgg19_bn']))
     return model
 
+
+hh=vgg16()
